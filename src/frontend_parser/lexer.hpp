@@ -6,35 +6,54 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
+
+enum class TOKEN_SET
+{
+    TOKEN_INSERT,
+    TOKEN_INTO,
+    TOKEN_STRING, // <TABLE_NAME /or DB_NAME> //
+    TOKEN_VALUE,
+    TOKEN_LEFT_PAREN,
+    TOKEN_INT,
+    TOKEN_RIGHT_PAREN
+};
+
+struct TOKEN
+{
+    TOKEN_SET TOKEN_TYPE;
+    std::string VALUE;
+};
 
 // CLASS FOR LEXER //
 class Lexer
 {
 private:
+    // DATA MEMBERS //
+    std::string localInputBuffer;
     int cursor;
+    char current;
     int length;
+    std::vector<TOKEN> TOKEN_LIST;
+
+    // MEMBER METHOD //
+    char advance();
+
+    void skipWhitespaces();
+
+    bool isAlpha(char current);
+
+    TOKEN tokenizeAlpha();
+
+    void displayAllTokens();
 
 public:
-    enum class TOKEN_SET
-    {
-        TOKEN_INSERT,
-        TOKEN_INTO,
-
-        // <TABLE_NAME / DB_NAME> //
-        TOKEN_ID,
-
-        TOKEN_VALUE
-    };
-
     // DECLARING THE MAIN LEXER CONSTRUCTOR //
     Lexer();
 
-    // DECLARING THE handle METHOD //
-    // void handle(const std::string &InputBuffer);
+    void initialize(const std::string &);
 
-    void initialize(const std::string &InputBuffer);
-
-    void tokenize(const std::string &InputBuffer);
+    void tokenize();
 };
 
 #endif

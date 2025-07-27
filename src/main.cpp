@@ -6,21 +6,16 @@
 class EvaluationWrapper
 {
 private:
-    Lexer *MAIN_LEXER;
+    Lexer mainLexer;
 
 public:
-    EvaluationWrapper()
-    {
-        MAIN_LEXER = new Lexer();
-    }
+    EvaluationWrapper() {}
 
     void handle(const std::string &InputBuffer)
     {
-        // std::cout << ">> INPUTBUFFER INSIDE EvaluationWrapper CLASS <<" << std::endl;
+        mainLexer.initialize(InputBuffer);
 
-        MAIN_LEXER->initialize(InputBuffer);
-
-        MAIN_LEXER->tokenize(InputBuffer);
+        mainLexer.tokenize();
     }
 };
 
@@ -32,8 +27,7 @@ int main()
     std::string InputBuffer;
 
     // CREATING AN INSTANCE OF THE LEXER CLASS //
-    // Lexer mainLexer;
-    EvaluationWrapper *mainIO = new EvaluationWrapper();
+    EvaluationWrapper mainIO;
 
     while (true)
     {
@@ -41,9 +35,7 @@ int main()
 
         std::getline(std::cin, InputBuffer);
 
-        mainIO->handle(InputBuffer);
-
-        // std::cout << "THIS IS THE INPUT BUFFER: " << InputBuffer << std::endl;
+        mainIO.handle(InputBuffer);
     }
 
     return 0;
