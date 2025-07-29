@@ -26,7 +26,7 @@ int main()
 
     std::string InputBuffer;
 
-    // CREATING AN INSTANCE OF THE LEXER CLASS //
+    // CREATING AN INSTANCE OF THE EvaluationWrapper CLASS //
     EvaluationWrapper mainIO;
 
     while (true)

@@ -35,6 +35,7 @@ private:
     char current;
     int length;
     std::vector<TOKEN> TOKEN_LIST;
+    std::string tokenTypeToString(TOKEN_SET);
 
     // MEMBER METHOD //
     char advance();
@@ -42,8 +43,10 @@ private:
     void skipWhitespaces();
 
     bool isAlpha(char current);
+    bool isDigit(char current);
 
     TOKEN tokenizeAlpha();
+    TOKEN tokenizeDigit();
 
     void displayAllTokens();
 

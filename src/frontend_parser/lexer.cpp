@@ -7,6 +7,36 @@
 Lexer::Lexer() {}
 
 // ------------------------------------------------------------------------- //
+// PRIVATE SCOPED METHODS:
+
+std::string Lexer::tokenTypeToString(TOKEN_SET REQUIRED_TOKEN)
+{
+    switch (REQUIRED_TOKEN)
+    {
+    case TOKEN_SET::TOKEN_INSERT:
+        return "TOKEN_INSERT";
+
+    case TOKEN_SET::TOKEN_INTO:
+        return "TOKEN_INTO";
+
+    case TOKEN_SET::TOKEN_STRING:
+        return "TOKEN_STRING";
+
+    case TOKEN_SET::TOKEN_VALUE:
+        return "TOKEN_VALUE";
+
+    case TOKEN_SET::TOKEN_LEFT_PAREN:
+        return "TOKEN_LEFT_PAREN";
+
+    case TOKEN_SET::TOKEN_INT:
+        return "TOKEN_INT";
+
+    case TOKEN_SET::TOKEN_RIGHT_PAREN:
+        return "TOKEN_RIGHT_PAREN";
+    }
+
+    return ">> [!!] WARNING: UNKNOWN_TOKEN_FOUND: " + std::to_string(static_cast<int>(REQUIRED_TOKEN));
+}
 
 char Lexer::advance()
 {
@@ -57,16 +87,28 @@ TOKEN Lexer::tokenizeAlpha()
     return newToken;
 }
 
+bool Lexer::isDigit(char current)
+{
+}
+
+TOKEN Lexer::tokenizeDigit()
+{
+}
+
 void Lexer::displayAllTokens()
 {
-    std::cout << "Tokens found: " << TOKEN_LIST.size() << std::endl;
-    for (size_t i = 0; i < TOKEN_LIST.size(); i++)
+    int counter = 0;
+
+    for (TOKEN CURRENT_TOKEN : TOKEN_LIST)
     {
-        std::cout << "Token " << i << ": " << TOKEN_LIST[i].VALUE << std::endl;
+        std::cout << ++counter << ".) " << CURRENT_TOKEN.VALUE << " ";
+
+        std::cout << tokenTypeToString(CURRENT_TOKEN.TOKEN_TYPE) << std::endl;
     }
 }
 
 // ------------------------------------------------------------------------- //
+// PUBLIC SCOPED METHODS:
 
 // INITIALIZING //
 void Lexer::initialize(const std::string &inputBuffer)
@@ -79,13 +121,18 @@ void Lexer::initialize(const std::string &inputBuffer)
 
 void Lexer::tokenize()
 {
-    skipWhitespaces(); // SPACE, TAB, NEWLINE → WHITESPACE CHARACTERS //
 
     while (current != '\0')
     {
+        skipWhitespaces(); // SPACE, TAB, NEWLINE → WHITESPACE CHARACTERS //
+
         if (isAlpha(current))
         {
             TOKEN_LIST.push_back(tokenizeAlpha());
+        }
+        else if (isDigit(current))
+        {
+            TOKEN_LIST.push_back(tokenizeDigit());
         }
         else
         {
