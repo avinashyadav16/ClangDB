@@ -8,14 +8,12 @@ enum class TOKEN_SET
 {
     TOKEN_INSERT,
     TOKEN_INTO,
-    TOKEN_STRING, // <TABLE_NAME /or DB_NAME> //
+    TOKEN_STRING,
     TOKEN_VALUE,
     TOKEN_LEFT_PAREN,
-    TOKEN_INT,
+    TOKEN_INTEGER,
+    TOKEN_COMMA,
     TOKEN_RIGHT_PAREN,
-
-    // FIXME: If necessary later
-    // below 2 thinking of excluding
     TOKEN_EOF,
     TOKEN_UNKNOWN
 };
