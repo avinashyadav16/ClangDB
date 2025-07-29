@@ -44,3 +44,7 @@
 *.vscode
 
 src/
+
+src/main.cpp
+src/frontend_parser/lexer.cpp
+src/frontend_parser/lexer.hpp
