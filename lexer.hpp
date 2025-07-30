@@ -30,6 +30,8 @@ private:
 
     TOKEN createNumberToken();
 
+    void throwLexerError();
+
     TOKEN createSymbolToken();
 
     TOKEN_SET getKeywordType(const std::string &word);

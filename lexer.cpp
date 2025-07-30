@@ -53,14 +53,57 @@ void Lexer::skipWhitespaces()
     }
 }
 
+// Would have been fair enough to implement with `unordered_map` //
+// but no issues for as of now
 TOKEN_SET Lexer::getKeywordType(const std::string &word)
 {
+    if (word == "CREATE" || word == "create")
+        return TOKEN_SET::TOKEN_CREATE;
+
+    if (word == "NEW" || word == "new")
+        return TOKEN_SET::TOKEN_NEW;
+
+    if (word == "DATABASE" || word == "database")
+        return TOKEN_SET::TOKEN_DATABASE;
+
+    if (word == "TABLE" || word == "table")
+        return TOKEN_SET::TOKEN_TABLE;
+
+    if (word == "USE" || word == "use")
+        return TOKEN_SET::TOKEN_USE;
+
     if (word == "INSERT" || word == "insert")
         return TOKEN_SET::TOKEN_INSERT;
+
     if (word == "INTO" || word == "into")
         return TOKEN_SET::TOKEN_INTO;
+
     if (word == "VALUE" || word == "value")
         return TOKEN_SET::TOKEN_VALUE;
+
+    if (word == "DELETE" || word == "delete")
+        return TOKEN_SET::TOKEN_DELETE;
+
+    if (word == "FROM" || word == "from")
+        return TOKEN_SET::TOKEN_FROM;
+
+    if (word == "SEARCH" || word == "search")
+        return TOKEN_SET::TOKEN_SEARCH;
+
+    if (word == "IN" || word == "in")
+        return TOKEN_SET::TOKEN_IN;
+
+    if (word == "UPDATE" || word == "update")
+        return TOKEN_SET::TOKEN_UPDATE;
+
+    if (word == "WHERE" || word == "where")
+        return TOKEN_SET::TOKEN_WHERE;
+
+    if (word == "WITH" || word == "with")
+        return TOKEN_SET::TOKEN_WITH;
+
+    if (word == "EXIT" || word == "exit")
+        return TOKEN_SET::TOKEN_EXIT;
 
     return TOKEN_SET::TOKEN_STRING;
 }
@@ -69,19 +112,26 @@ TOKEN Lexer::createStringToken()
 {
     std::string value;
 
-    while (CharUtils::isAlpha(current) && !isAtEnd())
+    // First character must be alpha or underscore
+    if (CharUtils::isAlpha(current) || current == '_')
     {
         value += current;
-
         advance();
+
+        // Subsequent characters can be alphanumeric or underscore
+        while ((CharUtils::isAlphaNumeric(current) || current == '_') && !isAtEnd())
+        {
+            value += current;
+            advance();
+        }
     }
 
     /*
     Creating a unordered_map of keywords and
     seaching the newToken.value over there
+    can be one of the option in `getKeywordType()`
     */
     TOKEN_SET newToken = getKeywordType(value);
-
     return TOKEN(newToken, value);
 }
 
@@ -98,6 +148,13 @@ TOKEN Lexer::createNumberToken()
     return TOKEN(TOKEN_SET::TOKEN_INTEGER, value);
 }
 
+void Lexer::throwLexerError()
+{
+    std::cout << "[!!!] LEXER ERROR: UNKNOWN_TOKEN_FOUND: TOKEN_UNKNOWN AT INDEX " << cursor << ": " << current << std::endl;
+
+    // exit(0);
+}
+
 TOKEN Lexer::createSymbolToken()
 {
     switch (current)
@@ -111,10 +168,42 @@ TOKEN Lexer::createSymbolToken()
     case ')':
         advance();
         return TOKEN(TOKEN_SET::TOKEN_RIGHT_PAREN, ")");
-    default:
-        char unknownSymbol = current;
+    case '<':
         advance();
-        return TOKEN(TOKEN_SET::TOKEN_UNKNOWN, std::string(1, unknownSymbol));
+        return TOKEN(TOKEN_SET::TOKEN_LESS_THAN, "<");
+    case '=': // CASE FOR double equals to SIGN (==) //
+    {
+        advance();
+
+        if (current != '=')
+        {
+            cursor--;
+            current = localInputBuffer[cursor];
+
+            throwLexerError();
+
+            advance();
+
+            return TOKEN(TOKEN_SET::TOKEN_UNKNOWN, "=");
+        }
+
+        advance();
+
+        return TOKEN(TOKEN_SET::TOKEN_EQUALS, "==");
+    }
+    case '>':
+        advance();
+        return TOKEN(TOKEN_SET::TOKEN_GREATER_THAN, ">");
+    default:
+    {
+        char unknownChar = current;
+
+        throwLexerError();
+        
+        advance();
+
+        return TOKEN(TOKEN_SET::TOKEN_UNKNOWN, std::string(1, unknownChar));
+    }
     }
 }
 
@@ -129,7 +218,7 @@ void Lexer::tokenize()
         if (isAtEnd())
             break;
 
-        if (CharUtils::isAlpha(current))
+        if (CharUtils::isAlpha(current) || current == '_')
         {
             TOKEN_LIST.push_back(createStringToken());
         }
