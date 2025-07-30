@@ -148,13 +148,6 @@ TOKEN Lexer::createNumberToken()
     return TOKEN(TOKEN_SET::TOKEN_INTEGER, value);
 }
 
-void Lexer::throwLexerError()
-{
-    std::cout << "[!!!] LEXER ERROR: UNKNOWN_TOKEN_FOUND: TOKEN_UNKNOWN AT INDEX " << cursor << ": " << current << std::endl;
-
-    // exit(0);
-}
-
 TOKEN Lexer::createSymbolToken()
 {
     switch (current)
@@ -162,15 +155,19 @@ TOKEN Lexer::createSymbolToken()
     case '(':
         advance();
         return TOKEN(TOKEN_SET::TOKEN_LEFT_PAREN, "(");
+
     case ',':
         advance();
         return TOKEN(TOKEN_SET::TOKEN_COMMA, ",");
+
     case ')':
         advance();
         return TOKEN(TOKEN_SET::TOKEN_RIGHT_PAREN, ")");
+
     case '<':
         advance();
         return TOKEN(TOKEN_SET::TOKEN_LESS_THAN, "<");
+
     case '=': // CASE FOR double equals to SIGN (==) //
     {
         advance();
@@ -181,34 +178,41 @@ TOKEN Lexer::createSymbolToken()
             current = localInputBuffer[cursor];
 
             throwLexerError();
-
             advance();
 
             return TOKEN(TOKEN_SET::TOKEN_UNKNOWN, "=");
         }
-
-        advance();
-
-        return TOKEN(TOKEN_SET::TOKEN_EQUALS, "==");
+        else
+        {
+            advance();
+            return TOKEN(TOKEN_SET::TOKEN_EQUALS, "==");
+        }
     }
     case '>':
         advance();
         return TOKEN(TOKEN_SET::TOKEN_GREATER_THAN, ">");
+
     default:
     {
-        char unknownChar = current;
-
+        std::string unknownChar(1, current);
         throwLexerError();
-        
         advance();
-
-        return TOKEN(TOKEN_SET::TOKEN_UNKNOWN, std::string(1, unknownChar));
+        return TOKEN(TOKEN_SET::TOKEN_UNKNOWN, unknownChar);
     }
     }
 }
 
-void Lexer::tokenize()
+LEXER_STATUS Lexer::throwLexerError()
 {
+    std::cout << "[!!!] LEXER ERROR: UNKNOWN_TOKEN_FOUND: TOKEN_UNKNOWN AT INDEX " << cursor << ": " << current << std::endl;
+
+    return LEXER_STATUS::LEXER_ERROR;
+}
+
+LEXER_STATUS Lexer::tokenize()
+{
+    LEXER_STATUS status = LEXER_STATUS::LEXER_SUCCESS;
+
     while (!isAtEnd()) // that means we are not at the end: current != '\0'
     {
         // SPACE, TAB, NEWLINE → WHITESPACE CHARACTERS //
@@ -228,11 +232,20 @@ void Lexer::tokenize()
         }
         else
         {
-            TOKEN_LIST.push_back(createSymbolToken());
+            TOKEN token = createSymbolToken();
+            TOKEN_LIST.push_back(token);
+
+            // Check if we encountered an unknown token
+            if (token.TOKEN_TYPE == TOKEN_SET::TOKEN_UNKNOWN)
+            {
+                status = LEXER_STATUS::LEXER_ERROR;
+            }
         }
     }
 
     displayAllTokens();
+
+    return status;
 }
 
 // const after the function signature means this function does not modify any member variables of the Lexer object.//

@@ -31,6 +31,12 @@ REQUIRE WORKING SYNTAX: CRUD
 
 */
 
+enum class LEXER_STATUS
+{
+    LEXER_SUCCESS,
+    LEXER_ERROR
+};
+
 enum class TOKEN_SET
 {
     // TOKEN KEYWORDS //

@@ -84,13 +84,13 @@ std::string TokenUtils::tokenTypeToString(TOKEN_SET tokenType)
         return "TOKEN_EOF";
 
     case TOKEN_SET::TOKEN_UNKNOWN:
-        return ">> [!] WARNING: UNKNOWN_TOKEN_FOUND: TOKEN_UNKNOWN";
+        return ">> [!] ERROR: LEXER_ERROR: TOKEN_UNKNOWN";
 
         // default:
         //     return "TOKEN_UNKNOWN";
     }
 
-    return ">> [!] WARNING: UNKNOWN_TOKEN_FOUND: TOKEN_UNKNOWN";
+    return ">> [!] ERROR: LEXER_ERROR: TOKEN_UNKNOWN";
 }
 
 void TokenUtils::displayToken(const TOKEN &token, int index)

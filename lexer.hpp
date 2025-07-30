@@ -30,7 +30,7 @@ private:
 
     TOKEN createNumberToken();
 
-    void throwLexerError();
+    LEXER_STATUS throwLexerError();
 
     TOKEN createSymbolToken();
 
@@ -44,7 +44,7 @@ public:
 
     void initialize(const std::string &inputBuffer);
 
-    void tokenize();
+    LEXER_STATUS tokenize();
 
     const std::vector<TOKEN> &getTokens() const;
 };
